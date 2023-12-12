@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
 
@@ -28,7 +27,7 @@ internal sealed class ExceptionMiddleware
         }
         catch (ValidationException ex)
         {
-            _logger.LogWarning("Ошибка валидации, сообщение: {Message}", ex.Message);
+            _logger.LogWarning(ex, ErrorTexts.Validation);
             var problemDetails = CreateProblemDetails(ex);
             await WriteResponse(context, problemDetails, StatusCodes.Status400BadRequest);
         }
@@ -38,15 +37,17 @@ internal sealed class ExceptionMiddleware
             var problemDetails = CreateProblemDetails(ex);
             await WriteResponse(context, problemDetails, StatusCodes.Status408RequestTimeout);
         }
-        catch (ProblemDetailsException ex) when 
+        catch (ProblemDetailsException ex) when
             (ex.ProblemDetails.Status is >= StatusCodes.Status400BadRequest and < StatusCodes.Status500InternalServerError)
         {
-            
+            _logger.LogWarning(ex, ErrorTexts.RelatedSerivce);
+            await WriteResponse(context, ex.ProblemDetails, StatusCodes.Status400BadRequest);
         }
-        catch (ProblemDetailsException ex) when 
+        catch (ProblemDetailsException ex) when
             (ex.ProblemDetails.Status >= StatusCodes.Status500InternalServerError)
         {
-
+            _logger.LogError(ex, ErrorTexts.RelatedSerivce);
+            await WriteResponse(context, ex.ProblemDetails, StatusCodes.Status502BadGateway);
         }
         catch (HttpRequestException ex)
         {
@@ -56,7 +57,7 @@ internal sealed class ExceptionMiddleware
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ErrorTexts.Internal);
+            _logger.LogError(ex, ErrorTexts.Internal + " Тип ошибки: {ExceptionType}.", ex.GetType());
             var problemDetails = CreateProblemDetails(ex);
             await WriteResponse(context, problemDetails, StatusCodes.Status500InternalServerError);
         }

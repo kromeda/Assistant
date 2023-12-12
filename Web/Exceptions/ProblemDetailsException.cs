@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace Assistant.Web;
+﻿namespace Assistant.Web;
 
 [Serializable]
 internal class ProblemDetailsException : Exception

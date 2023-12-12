@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Web.Http;
+﻿using System.Web.Http;
 
 namespace Assistant.Web;
 

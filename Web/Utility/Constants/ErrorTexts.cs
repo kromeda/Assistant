@@ -7,4 +7,6 @@ internal static class ErrorTexts
     internal const string RelatedSerivce = "Возникла ошибка при обращении к сторонней системе.";
 
     internal const string TaskCanceled = "Время ожидания запроса истекло, либо запрос был отменен.";
+
+    internal const string Validation = "Ошибка валидации.";
 }

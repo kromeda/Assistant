@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace Assistant.Web;
+﻿namespace Assistant.Web;
 
 public interface IProblemDetailsConverter
 {
