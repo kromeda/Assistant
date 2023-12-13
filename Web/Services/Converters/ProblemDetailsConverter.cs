@@ -1,20 +1,24 @@
-﻿namespace Assistant.Web;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.IO;
 
-internal class ProblemDetailsConverter : IProblemDetailsConverter
+namespace Assistant.Web
 {
-    public int Order => 50;
-
-    public bool IsEnabled => true;
-
-    public ProblemDetails Convert(Stream stream)
+    internal class ProblemDetailsConverter : IProblemDetailsConverter
     {
-        if (Json.TryDeserialize(stream, out ProblemDetails problemDetails) &&
-            !string.IsNullOrWhiteSpace(problemDetails.Title))
-        {
-            return problemDetails;
-        }
+        public int Order => 50;
 
-        stream.Position = 0;
-        return null;
+        public bool IsEnabled => true;
+
+        public ProblemDetails Convert(Stream stream)
+        {
+            if (Json.TryDeserialize(stream, out ProblemDetails problemDetails) &&
+                !string.IsNullOrWhiteSpace(problemDetails.Title))
+            {
+                return problemDetails;
+            }
+
+            stream.Position = 0;
+            return null;
+        }
     }
 }

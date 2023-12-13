@@ -1,45 +1,51 @@
-﻿namespace Assistant.Web;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
-internal class DsupErrorModelConverter : IProblemDetailsConverter
+namespace Assistant.Web
 {
-    public int Order => 100;
-
-    public bool IsEnabled => true;
-
-    public ProblemDetails Convert(Stream stream)
+    internal class DsupErrorModelConverter : IProblemDetailsConverter
     {
-        if (Json.TryDeserialize(stream, out List<ErrorModel> errorModels) && errorModels?.Count > 0)
+        public int Order => 100;
+
+        public bool IsEnabled => true;
+
+        public ProblemDetails Convert(Stream stream)
         {
-            var problemDetails = new ProblemDetails
+            if (Json.TryDeserialize(stream, out List<ErrorModel> errorModels) && errorModels?.Count > 0)
             {
-                Title = ErrorTexts.RelatedSerivce,
-                Detail = ErrorTexts.RequestViolation
-            };
+                var problemDetails = new ProblemDetails
+                {
+                    Title = ErrorTexts.RelatedSerivce,
+                    Detail = ErrorTexts.RequestViolation
+                };
 
-            if (errorModels?.Count > 0)
-            {
-                var errors = errorModels
-                    .Where(error => !string.IsNullOrWhiteSpace(error.Message))
-                    .SelectMany(error => error.RefKeys
-                        .Select(key => new Error(key, error.Message)))
-                    .ToArray();
+                if (errorModels?.Count > 0)
+                {
+                    var errors = errorModels
+                        .Where(error => !string.IsNullOrWhiteSpace(error.Message))
+                        .SelectMany(error => error.RefKeys
+                            .Select(key => new Error(key, error.Message)))
+                        .ToArray();
 
-                problemDetails.Extensions.Add(new("errors", errors));
+                    problemDetails.Extensions.Add(new KeyValuePair<string, object>("errors", errors));
+                }
+
+                return problemDetails;
             }
 
-            return problemDetails;
+            stream.Position = 0;
+            return null;
         }
 
-        stream.Position = 0;
-        return null;
-    }
+        public class ErrorModel
+        {
+            public ICollection<string> RefKeys { get; set; }
 
-    public class ErrorModel
-    {
-        public ICollection<string> RefKeys { get; set; }
+            public string Message { get; set; }
 
-        public string Message { get; set; }
-
-        public bool IsCritical { get; set; }
+            public bool IsCritical { get; set; }
+        }
     }
 }

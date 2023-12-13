@@ -1,21 +1,22 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Assistant.Web;
-
-public static class WebExtensions
+namespace Assistant.Web
 {
-    public static IServiceCollection AddAssistExceptions(this IServiceCollection services)
+    public static class WebExtensions
     {
-        return services
-            .AddScoped<IProblemDetailsConverter, ProblemDetailsConverter>()
-            .AddScoped<IProblemDetailsConverter, DsupErrorModelConverter>()
-            .AddScoped<IProblemDetailsConverter, HttpErrorConverter>();
-    }
+        public static IServiceCollection AddAssistExceptions(this IServiceCollection services)
+        {
+            return services
+                .AddScoped<IProblemDetailsConverter, ProblemDetailsConverter>()
+                .AddScoped<IProblemDetailsConverter, DsupErrorModelConverter>()
+                .AddScoped<IProblemDetailsConverter, HttpErrorConverter>();
+        }
 
-    public static IApplicationBuilder UseAssistExceptionHandling(this IApplicationBuilder application)
-    {
-        return application
-            .UseMiddleware<ExceptionMiddleware>();
+        public static IApplicationBuilder UseAssistExceptionHandling(this IApplicationBuilder application)
+        {
+            return application
+                .UseMiddleware<ExceptionMiddleware>();
+        }
     }
 }

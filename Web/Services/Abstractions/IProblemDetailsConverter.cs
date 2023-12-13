@@ -1,10 +1,14 @@
-﻿namespace Assistant.Web;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.IO;
 
-public interface IProblemDetailsConverter
+namespace Assistant.Web
 {
-    int Order { get; }
+    public interface IProblemDetailsConverter
+    {
+        int Order { get; }
 
-    bool IsEnabled { get; }
+        bool IsEnabled { get; }
 
-    ProblemDetails Convert(Stream stream);
+        ProblemDetails Convert(Stream stream);
+    }
 }

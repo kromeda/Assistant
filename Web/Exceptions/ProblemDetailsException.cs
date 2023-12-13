@@ -1,12 +1,16 @@
-﻿namespace Assistant.Web;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 
-[Serializable]
-internal class ProblemDetailsException : Exception
+namespace Assistant.Web
 {
-    public ProblemDetailsException(ProblemDetails problemDetails)
+    [Serializable]
+    internal class ProblemDetailsException : Exception
     {
-        ProblemDetails = problemDetails;
-    }
+        public ProblemDetailsException(ProblemDetails problemDetails)
+        {
+            ProblemDetails = problemDetails;
+        }
 
-    public ProblemDetails ProblemDetails { get; }
+        public ProblemDetails ProblemDetails { get; }
+    }
 }

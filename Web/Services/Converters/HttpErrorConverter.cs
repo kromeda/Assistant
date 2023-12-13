@@ -1,27 +1,39 @@
-﻿namespace Assistant.Web;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.IO;
 
-internal class HttpErrorConverter : IProblemDetailsConverter
+namespace Assistant.Web
 {
-    public int Order => 25;
-
-    public bool IsEnabled => true;
-
-    public ProblemDetails Convert(Stream stream)
+    internal class HttpErrorConverter : IProblemDetailsConverter
     {
-        if (Json.TryDeserialize(stream, out HttpError error))
-        {
-            var problemDetails = new ProblemDetails
-            {
-                Title = ErrorTexts.RelatedSerivce,
-                Detail = error.Message
-            };
+        public int Order => 25;
 
-            return problemDetails;
+        public bool IsEnabled => true;
+
+        public ProblemDetails Convert(Stream stream)
+        {
+            if (Json.TryDeserialize(stream, out HttpError error))
+            {
+                var problemDetails = new ProblemDetails
+                {
+                    Title = ErrorTexts.RelatedSerivce,
+                    Detail = error.Message
+                };
+
+                return problemDetails;
+            }
+
+            stream.Position = 0;
+            return null;
         }
 
-        stream.Position = 0;
-        return null;
-    }
+        public class HttpError
+        {
+            public HttpError(string message)
+            {
+                Message = message;
+            }
 
-    public record HttpError(string Message);
+            public string Message { get; set; }
+        }
+    }
 }
