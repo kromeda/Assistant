@@ -8,30 +8,26 @@ internal class DsupErrorModelConverter : IProblemDetailsConverter
 
     public ProblemDetails Convert(Stream stream)
     {
-        if (Json.TryDeserialize(stream, out List<ErrorModel> errors) && errors?.Count > 0)
+        if (Json.TryDeserialize(stream, out List<ErrorModel> errorModels) && errorModels?.Count > 0)
         {
-            var detailsBuilder = new StringBuilder();
-
-            if (errors?.Count > 0)
-            {
-                detailsBuilder.Append(ErrorTexts.RequestViolation);
-                detailsBuilder.Append(string.Join("; ", errors
-                    .Where(x => !string.IsNullOrWhiteSpace(x.Message))
-                    .SelectMany(error => error.RefKeys
-                        .Select(key =>
-                        {
-                            string critical = error.IsCritical ? "да" : "нет";
-                            return $"поле: '{key}', описание: '{error.Message}', критично: {critical}";
-                        }))));
-
-                detailsBuilder.Append('.');
-            }
-
-            return new ProblemDetails
+            var problemDetails = new ProblemDetails
             {
                 Title = ErrorTexts.RelatedSerivce,
-                Detail = detailsBuilder.ToString()
+                Detail = ErrorTexts.RequestViolation
             };
+
+            if (errorModels?.Count > 0)
+            {
+                var errors = errorModels
+                    .Where(error => !string.IsNullOrWhiteSpace(error.Message))
+                    .SelectMany(error => error.RefKeys
+                        .Select(key => new Error(key, error.Message)))
+                    .ToArray();
+
+                problemDetails.Extensions.Add(new("errors", errors));
+            }
+
+            return problemDetails;
         }
 
         stream.Position = 0;
