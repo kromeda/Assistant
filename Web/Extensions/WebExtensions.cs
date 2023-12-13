@@ -9,6 +9,7 @@ public static class WebExtensions
     {
         return services
             .AddScoped<IProblemDetailsConverter, ProblemDetailsConverter>()
+            .AddScoped<IProblemDetailsConverter, DsupErrorModelConverter>()
             .AddScoped<IProblemDetailsConverter, HttpErrorConverter>();
     }
 

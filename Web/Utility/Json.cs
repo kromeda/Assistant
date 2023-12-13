@@ -1,4 +1,5 @@
-﻿using System.Text.Encodings.Web;
+﻿using System.Net.Http.Json;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
@@ -27,7 +28,17 @@ public static class Json
 
     public static async Task Serialize<T>(Stream utf8Json, T value, CancellationToken cancellationToken)
     {
-        await JsonSerializer.SerializeAsync(utf8Json, value, _jsonOptions, cancellationToken);
+        await JsonSerializer.SerializeAsync(utf8Json, value, JsonOptions, cancellationToken);
+    }
+
+    public static JsonContent GetContent<T>(T value)
+    {
+        return JsonContent.Create(value, options: JsonOptions);
+    }
+
+    public static Task<T> ReadContent<T>(HttpContent content, CancellationToken cancellationToken)
+    {
+        return content.ReadFromJsonAsync<T>(JsonOptions, cancellationToken);
     }
 
     private static JsonSerializerOptions GetOptions()
@@ -36,8 +47,7 @@ public static class Json
         {
             Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-            WriteIndented = false
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
         };
     }
 }

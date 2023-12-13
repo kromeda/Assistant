@@ -1,30 +1,27 @@
-﻿using System.Web.Http;
-
-namespace Assistant.Web;
+﻿namespace Assistant.Web;
 
 internal class HttpErrorConverter : IProblemDetailsConverter
 {
+    public int Order => 25;
+
+    public bool IsEnabled => true;
+
     public ProblemDetails Convert(Stream stream)
     {
-        if (Json.TryDeserialize(stream, out HttpError error) &&
-            !string.IsNullOrEmpty(error.Message))
+        if (Json.TryDeserialize(stream, out HttpError error))
         {
             var problemDetails = new ProblemDetails
             {
-                Title = error.Message,
-                Detail = error.MessageDetail
+                Title = ErrorTexts.RelatedSerivce,
+                Detail = error.Message
             };
 
-            if (error?.Count > 0)
-            {
-                foreach (KeyValuePair<string, object> kvp in error)
-                {
-                    problemDetails.Extensions.Add(kvp.Key, kvp.Value);
-                }
-            }
+            return problemDetails;
         }
 
         stream.Position = 0;
         return null;
     }
+
+    public record HttpError(string Message);
 }
