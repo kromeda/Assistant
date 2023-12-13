@@ -43,9 +43,14 @@ namespace Assistant.Web
             }
         }
 
-        public static async Task Serialize<T>(Stream utf8Json, T value, CancellationToken cancellationToken)
+        public static Task Serialize<T>(Stream utf8Json, T value, CancellationToken cancellationToken)
         {
-            await JsonSerializer.SerializeAsync(utf8Json, value, JsonOptions, cancellationToken);
+            return JsonSerializer.SerializeAsync(utf8Json, value, JsonOptions, cancellationToken);
+        }
+
+        public static string Serialize<T>(T value)
+        {
+            return JsonSerializer.Serialize(value, options: JsonOptions);
         }
 
         public static JsonContent GetContent<T>(T value)

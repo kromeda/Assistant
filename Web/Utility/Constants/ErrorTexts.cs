@@ -10,6 +10,6 @@
 
         internal const string Validation = "Ошибка валидации.";
 
-        internal const string RequestViolation = "Обнаружены нарушения требований к запросу: ";
+        internal const string RequestViolation = "Обнаружены нарушения требований к запросу.";
     }
 }

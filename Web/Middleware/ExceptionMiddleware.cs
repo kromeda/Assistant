@@ -98,9 +98,14 @@ namespace Assistant.Web
 
                 if (ex.ProblemDetails.Extensions?.Keys?.Count > 0)
                 {
-                    templateBuilder.AppendLine();
-                    templateBuilder.Append(" Проблемные значения: {@Extensions}");
-                    args.Add(ex.ProblemDetails.Extensions);
+                    var extensionsJson = Json.Serialize(ex.ProblemDetails.Extensions);
+
+                    if (!string.IsNullOrEmpty(extensionsJson))
+                    {
+                        templateBuilder.AppendLine();
+                        templateBuilder.Append(" Проблемные значения: {Extensions}");
+                        args.Add(extensionsJson);
+                    }
                 }
 
                 if (severity == LogLevel.Error)
