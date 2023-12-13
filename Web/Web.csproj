@@ -6,7 +6,7 @@
 	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	<PackageId>Assistant.Web</PackageId>
 	<Title>Assistant Web</Title>
-	<Version>0.0.3</Version>
+	<Version>0.0.4</Version>
 	<Authors>kromeda</Authors>
 	<Description>Пакет, обеспечивающий более стабильную работу ваших веб-приложений.</Description>
 	<PackageIcon>logo.png</PackageIcon>
